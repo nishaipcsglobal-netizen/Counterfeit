@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% block title %}Verify Product · BlockVerify{% endblock %}
+
+{% block head %}
+<script src="https://unpkg.com/html5-qrcode"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="grid">
+    <section class="card">
+      <div class="hd">
+        <div>
+          <h2>Product Verification</h2>
+          <p>Scan a QR code using your camera or upload a QR image. Results are verified on the blockchain.</p>
+        </div>
+        <span class="badge" id="cameraState">Camera: off</span>
+      </div>
+
+      <div class="bd">
+        <div class="scanner" id="reader">
+          <small>Click “Open camera scanner” to start</small>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <button class="btn primary" id="btnStart">📷 Open camera scanner</button>
+          <button class="btn danger" id="btnStop" disabled>⏹ Stop</button>
+          <span class="hint">Tip: allow camera permission when prompted.</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row" style="align-items:flex-start">
+          <div style="flex:1; min-width:240px">
+            <label class="hint" for="qrFile">Upload QR image file</label>
+            <input id="qrFile" type="file" accept="image/*" />
+            <div class="hint" style="margin-top:8px">PNG/JPG supported.</div>
+          </div>
+          <div style="flex:1; min-width:240px">
+            <label class="hint" for="manualId">Manual entry (optional)</label>
+            <input id="manualId" type="text" placeholder="Enter product id (or paste scanned value)" />
+            <div class="row" style="margin-top:10px">
+              <button class="btn" id="btnManual">Verify manually</button>
+              <span class="hint">Supports values like <code>1234|hash</code>.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="hd">
+        <div>
+          <h2>Result</h2>
+          <p>Latest verification result.</p>
+        </div>
+      </div>
+      <div class="bd">
+        <div id="result" class="status" style="display:none"></div>
+        <div id="resultEmpty" class="empty">No scan yet.</div>
+
+        <div class="divider"></div>
+
+        <div class="hint">
+          Recent scans are saved to <b>Scan history</b>.
+        </div>
+      </div>
+    </aside>
+  </div>
+
+<script>
+(function () {
+  const cameraState = document.getElementById("cameraState");
+  const btnStart = document.getElementById("btnStart");
+  const btnStop = document.getElementById("btnStop");
+  const fileInput = document.getElementById("qrFile");
+  const manualId = document.getElementById("manualId");
+  const btnManual = document.getElementById("btnManual");
+
+  const resultEl = document.getElementById("result");
+  const resultEmpty = document.getElementById("resultEmpty");
+
+  let html5QrCode = null;
+  let isRunning = false;
+
+  function normalizeProductId(raw) {
+    if (!raw) return "";
+    return String(raw).trim().split("|", 1)[0].trim();
+  }
+
+  function setCameraState(on) {
+    cameraState.textContent = "Camera: " + (on ? "on" : "off");
+    btnStart.disabled = on;
+    btnStop.disabled = !on;
+  }
+
+  function showResult(payload) {
+    resultEmpty.style.display = "none";
+    resultEl.style.display = "block";
+
+    const status = payload.status;
+    const pid = payload.product_id || "";
+    const pname = payload.name || "";
+
+    resultEl.className = "status " + (status === "AUTHENTIC" ? "ok" : (status === "FAKE" ? "bad" : "err"));
+
+    const icon = status === "AUTHENTIC" ? "✅" : (status === "FAKE" ? "❌" : "⚠️");
+
+    resultEl.innerHTML = `
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px">
+        <div style="font-size:18px; font-weight:700">${icon} ${status}</div>
+        <span class="badge">${new Date().toLocaleString()}</span>
+      </div>
+      <div style="margin-top:10px" class="kv">
+        <div class="k">Product ID</div><div>${pid || "-"}</div>
+        <div class="k">Name</div><div>${pname || "-"}</div>
+      </div>
+      ${payload.error ? `<div style="margin-top:10px" class="hint">Error: ${payload.error}</div>` : ``}
+    `;
+  }
+
+  async function verifyProduct(rawValue) {
+    const productId = normalizeProductId(rawValue);
+    if (!productId) {
+      showResult({status: "ERROR", error: "No product id found in QR / input."});
+      return;
+    }
+
+    showResult({status: "ERROR", product_id: productId, error: "Verifying..."});
+
+    try {
+      const res = await fetch("{% url 'verify_api' %}", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({product_id: productId})
+      });
+      const data = await res.json();
+      showResult(data);
+    } catch (e) {
+      showResult({status: "ERROR", product_id: productId, error: String(e)});
+    }
+  }
+
+  async function startCamera() {
+    if (isRunning) return;
+    html5QrCode = html5QrCode || new Html5Qrcode("reader");
+
+    try {
+      const devices = await Html5Qrcode.getCameras();
+      if (!devices || devices.length === 0) {
+        showResult({status: "ERROR", error: "No camera found on this device."});
+        return;
+      }
+
+      setCameraState(true);
+      isRunning = true;
+
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        async (decodedText) => {
+          await stopCamera();
+          verifyProduct(decodedText);
+        }
+      );
+    } catch (e) {
+      setCameraState(false);
+      isRunning = false;
+      showResult({status: "ERROR", error: "Camera start failed: " + String(e)});
+    }
+  }
+
+  async function stopCamera() {
+    if (!html5QrCode || !isRunning) {
+      setCameraState(false);
+      isRunning = false;
+      return;
+    }
+
+    try {
+      await html5QrCode.stop();
+    } catch (e) {
+    } finally {
+      setCameraState(false);
+      isRunning = false;
+    }
+  }
+
+  async function scanFile(file) {
+    html5QrCode = html5QrCode || new Html5Qrcode("reader");
+    try {
+      const decodedText = await html5QrCode.scanFile(file, true);
+      verifyProduct(decodedText);
+    } catch (e) {
+      showResult({status: "ERROR", error: "Could not read QR from image: " + String(e)});
+    }
+  }
+
+  btnStart.addEventListener("click", startCamera);
+  btnStop.addEventListener("click", stopCamera);
+
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) scanFile(file);
+  });
+
+  btnManual.addEventListener("click", () => verifyProduct(manualId.value));
+})();
+</script>
+{% endblock %}

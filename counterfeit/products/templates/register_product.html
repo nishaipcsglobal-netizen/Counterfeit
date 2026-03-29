@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Register Product · Manufacturer · BlockVerify{% endblock %}
+{% block content %}
+  <section class="card" style="margin-top:18px; max-width:760px">
+    <div class="hd">
+      <div>
+        <h2>Register Product</h2>
+        <p>Product Id, Product Name, Category (SHA-256 will be generated automatically).</p>
+      </div>
+    </div>
+    <div class="bd">
+      {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <div>
+          <label class="hint">Product ID</label>
+          <input type="text" name="product_id" required />
+        </div>
+        <div style="margin-top:12px">
+          <label class="hint">Product Name</label>
+          <input type="text" name="product_name" required />
+        </div>
+        <div style="margin-top:12px">
+          <label class="hint">Category</label>
+          <input type="text" name="category" required />
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn primary" type="submit">Register & Generate QR</button>
+          <a class="pill" href="{% url 'manufacturer_dashboard' %}">Back</a>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

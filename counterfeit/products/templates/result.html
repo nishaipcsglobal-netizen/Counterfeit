@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Registered · BlockVerify{% endblock %}
+{% block content %}
+  <section class="card" style="margin-top:18px; max-width:900px">
+    <div class="hd">
+      <div>
+        <h2>Product Registered</h2>
+        <p>QR code generated successfully.</p>
+      </div>
+      <a class="pill" href="{% url 'my_products' %}">My products</a>
+    </div>
+    <div class="bd">
+      <div class="kv">
+        <div class="k">Product ID</div><div>{{ product_id }}</div>
+        {% if product %}
+          <div class="k">Product Name</div><div>{{ product.product_name }}</div>
+          <div class="k">Category</div><div>{{ product.category }}</div>
+          <div class="k">Manufacturer</div><div>{{ product.manufacturer_name }}</div>
+          <div class="k">SHA-256 Hash</div><div style="word-break:break-all">{{ product.hash_value }}</div>
+        {% endif %}
+      </div>
+      {% if qr_url %}
+        <div class="divider"></div>
+        <div class="row">
+          <a class="btn primary" href="{{ qr_url }}" target="_blank" rel="noreferrer">🧾 View QR</a>
+          <a class="btn" href="{% url 'verify' %}">Verify now</a>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

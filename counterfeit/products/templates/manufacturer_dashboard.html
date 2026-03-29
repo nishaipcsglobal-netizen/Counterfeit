@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Manufacturer Dashboard · BlockVerify{% endblock %}
+{% block content %}
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <section class="card" style="margin-top:18px">
+      <div class="hd">
+        <div>
+          <h2>Manufacturer Module</h2>
+          <p>Register products and manage generated QRs.</p>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="row">
+          <a class="btn primary" href="{% url 'register_product' %}">➕ Register Product</a>
+          <a class="btn" href="{% url 'my_products' %}">📦 View My Products</a>
+          <a class="btn" href="{% url 'generated_qrs' %}">🧾 Generated QRs</a>
+        </div>
+        <div class="divider"></div>
+        <div class="hint">Registering generates QR (<code>product_id|sha256</code>) and stores to blockchain (if Node is running).</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:18px">
+      <div class="hd">
+        <div>
+          <h2>Customer Pages</h2>
+          <p>Verify flow preview</p>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="row">
+          <a class="pill" href="{% url 'verify' %}">Verify</a>
+          <a class="pill" href="{% url 'browse_products' %}">Browse</a>
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock %}

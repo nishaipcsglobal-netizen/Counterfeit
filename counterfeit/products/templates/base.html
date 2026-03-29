@@ -1,0 +1,216 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}BlockVerify{% endblock %}</title>
+  <style>
+    :root{
+      --bg0:#070a12;
+      --bg1:#0d1220;
+      --card:#0f1a2e;
+      --text:#e8eefc;
+      --muted:#98a4c5;
+      --line:rgba(255,255,255,.10);
+      --cyan:#22d3ee;
+      --green:#34d399;
+      --red:#fb7185;
+      --yellow:#fbbf24;
+      --shadow: 0 16px 40px rgba(0,0,0,.45);
+      --radius: 16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(34,211,238,.12), transparent 60%),
+        radial-gradient(900px 500px at 80% 20%, rgba(52,211,153,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      min-height:100vh;
+    }
+    a{color:inherit; text-decoration:none}
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+    .wrap{max-width:1150px; margin:0 auto; padding:24px}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:16px; padding:14px 18px;
+      border:1px solid var(--line); background:rgba(15,26,46,.55);
+      backdrop-filter: blur(10px);
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: var(--shadow);
+    }
+    .brand{display:flex; align-items:center; gap:10px}
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background: linear-gradient(135deg, rgba(34,211,238,.9), rgba(52,211,153,.9));
+      display:grid; place-items:center; color:#041018; font-weight:900;
+      letter-spacing:.5px;
+    }
+    .brand h1{font-size:16px; margin:0; letter-spacing:.5px}
+    .brand small{display:block; color:var(--muted); font-size:12px; margin-top:2px}
+    .nav{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .pill{
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      color:var(--muted);
+      transition: all .15s ease;
+      font-size:13px;
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(7,10,18,.35);
+    }
+    .pill:hover{border-color: rgba(34,211,238,.35); color:var(--text)}
+    .pill.active{
+      color:var(--text);
+      border-color: rgba(34,211,238,.55);
+      box-shadow: 0 0 0 3px rgba(34,211,238,.10);
+      background: rgba(34,211,238,.10);
+    }
+    .right{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      font-size:12px; color:var(--muted);
+      background: rgba(7,10,18,.25);
+    }
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.4fr .9fr;
+      gap:18px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(15,26,46,.62);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:16px 18px;
+      border-bottom:1px solid var(--line);
+      display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
+    }
+    .card .hd h2{margin:0; font-size:16px}
+    .card .hd p{margin:6px 0 0; color:var(--muted); font-size:13px; line-height:1.4}
+    .card .bd{padding:16px 18px}
+    .row{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    .btn{
+      appearance:none; border:1px solid rgba(255,255,255,.14);
+      background: rgba(7,10,18,.35);
+      color:var(--text);
+      border-radius: 12px;
+      padding:11px 14px;
+      font-size:13px;
+      cursor:pointer;
+      transition: all .15s ease;
+      display:inline-flex; gap:10px; align-items:center;
+      user-select:none;
+    }
+    .btn:hover{border-color: rgba(34,211,238,.45); transform: translateY(-1px)}
+    .btn.primary{
+      border-color: rgba(34,211,238,.55);
+      background: linear-gradient(135deg, rgba(34,211,238,.18), rgba(52,211,153,.12));
+    }
+    .btn.danger{border-color: rgba(251,113,133,.55)}
+    .btn:disabled{opacity:.6; cursor:not-allowed; transform:none}
+    .hint{color:var(--muted); font-size:12px}
+    .divider{height:1px; background:var(--line); margin:16px 0}
+    input[type="text"], input[type="password"], input[type="file"], select{
+      width:100%;
+      background: rgba(7,10,18,.35);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:12px;
+      padding:12px 12px;
+      color:var(--text);
+      outline:none;
+    }
+    input[type="text"]:focus, input[type="password"]:focus, select:focus{
+      border-color: rgba(34,211,238,.55);
+      box-shadow: 0 0 0 3px rgba(34,211,238,.10);
+    }
+    .scanner{
+      width:100%;
+      min-height:320px;
+      display:grid;
+      place-items:center;
+      border:1px dashed rgba(255,255,255,.18);
+      background: rgba(7,10,18,.25);
+      border-radius: 14px;
+      overflow:hidden;
+    }
+    .scanner small{color:var(--muted)}
+    .status{
+      border-radius:14px;
+      padding:14px;
+      border:1px solid var(--line);
+      background: rgba(7,10,18,.25);
+    }
+    .status.ok{border-color: rgba(52,211,153,.35); background: rgba(52,211,153,.08)}
+    .status.bad{border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.08)}
+    .status.err{border-color: rgba(251,191,36,.35); background: rgba(251,191,36,.08)}
+    .kv{display:grid; grid-template-columns: 140px 1fr; gap:8px; font-size:13px}
+    .kv div{padding:2px 0}
+    .kv .k{color:var(--muted)}
+    table{width:100%; border-collapse:collapse}
+    th, td{padding:12px 10px; text-align:left; border-bottom:1px solid var(--line); font-size:13px}
+    th{color:var(--muted); font-weight:600}
+    .empty{color:var(--muted); font-size:13px; padding:14px}
+    .alert{
+      border-radius:14px;
+      padding:12px 14px;
+      border:1px solid rgba(251,191,36,.35);
+      background: rgba(251,191,36,.08);
+      color: var(--text);
+      margin-bottom:12px;
+      font-size:13px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns: 1fr}
+    }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">BV</div>
+        <div>
+          <h1>BLOCKVERIFY</h1>
+          <small>QR + SHA-256 verification</small>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="pill {% if active_tab == 'verify' %}active{% endif %}" href="{% url 'verify' %}">Verify product</a>
+        <a class="pill {% if active_tab == 'scan_history' %}active{% endif %}" href="{% url 'scan_history' %}">Scan history</a>
+        <a class="pill {% if active_tab == 'browse_products' %}active{% endif %}" href="{% url 'browse_products' %}">Browse products</a>
+      </nav>
+
+      <div class="right">
+        {% if request.user.is_authenticated %}
+          <span class="badge">👤 {{ request.user.username }} · {{ request.user.role }}</span>
+          {% if request.user.role == 'admin' %}
+            <a class="pill" href="{% url 'admin_dashboard' %}">Admin</a>
+          {% elif request.user.role == 'manufacturer' %}
+            <a class="pill" href="{% url 'manufacturer_dashboard' %}">Manufacturer</a>
+          {% endif %}
+          <a class="pill" href="{% url 'logout' %}">Logout</a>
+        {% else %}
+          <a class="pill" href="{% url 'login' %}">Login</a>
+          <a class="pill" href="{% url 'register' %}">Register</a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

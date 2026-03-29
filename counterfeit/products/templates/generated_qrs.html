@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Generated QRs · Manufacturer · BlockVerify{% endblock %}
+{% block content %}
+  <section class="card" style="margin-top:18px">
+    <div class="hd">
+      <div>
+        <h2>Generated QRs</h2>
+        <p>Download/preview QR codes generated for your products.</p>
+      </div>
+    </div>
+    <div class="bd" style="padding:0">
+      {% if products %}
+        <table>
+          <thead>
+            <tr>
+              <th>Product ID</th>
+              <th>Name</th>
+              <th>QR</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in products %}
+              <tr>
+                <td>{{ p.product_id }}</td>
+                <td>{{ p.product_name }}</td>
+                <td>
+                  {% if p.qr_code %}
+                    <a class="btn" href="{{ p.qr_code.url }}" target="_blank" rel="noreferrer">Open</a>
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="empty">No QRs yet.</div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

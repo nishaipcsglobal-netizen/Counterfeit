@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Manage Users · Admin · BlockVerify{% endblock %}
+{% block content %}
+  <section class="card" style="margin-top:18px">
+    <div class="hd">
+      <div>
+        <h2>Manage Users</h2>
+        <p>Add users and disable/enable user access.</p>
+      </div>
+      <div class="row">
+        <a class="btn primary" href="{% url 'add_user' %}">➕ Add user</a>
+      </div>
+    </div>
+    <div class="bd" style="padding:0">
+      <table>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+            <tr>
+              <td>{{ u.username }}</td>
+              <td>{{ u.role }}</td>
+              <td>{% if u.is_active %}✅ Active{% else %}❌ Disabled{% endif %}</td>
+              <td>
+                {% if u.username != request.user.username %}
+                  <a class="pill" href="{% url 'toggle_user' u.id %}">
+                    {% if u.is_active %}Disable{% else %}Enable{% endif %}
+                  </a>
+                {% else %}
+                  <span class="hint">Current user</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

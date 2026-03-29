@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Add User · BlockVerify{% endblock %}
+
+{% block content %}
+<section class="card" style="margin-top:18px; max-width:780px">
+  <div class="hd">
+    <div>
+      <h2>Add User</h2>
+      <p>Create Admin / Manufacturer / Customer accounts.</p>
+    </div>
+    <a class="pill" href="{% url 'manage_users' %}">← Back</a>
+  </div>
+
+  <div class="bd">
+    {% if messages %}
+      <div class="divider"></div>
+      {% for m in messages %}
+        <div class="badge">{{ m }}</div>
+      {% endfor %}
+      <div class="divider"></div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="status err">{{ form.non_field_errors }}</div>
+        <div class="divider"></div>
+      {% endif %}
+
+      <div class="row" style="gap:14px">
+        <div style="flex:1; min-width:240px">
+          <label class="hint">Username</label>
+          {{ form.username }}
+          <div class="hint">{{ form.username.errors }}</div>
+        </div>
+
+        <div style="flex:1; min-width:240px">
+          <label class="hint">Email</label>
+          {{ form.email }}
+          <div class="hint">{{ form.email.errors }}</div>
+        </div>
+      </div>
+
+      <div class="row" style="gap:14px; margin-top:12px">
+        <div style="flex:1; min-width:240px">
+          <label class="hint">Role</label>
+          {{ form.role }}
+          <div class="hint">{{ form.role.errors }}</div>
+        </div>
+
+        <div style="flex:1; min-width:240px">
+          <label class="hint">Active</label>
+          {{ form.is_active }}
+          <div class="hint">{{ form.is_active.errors }}</div>
+        </div>
+      </div>
+
+      <div class="row" style="gap:14px; margin-top:12px">
+        <div style="flex:1; min-width:240px">
+          <label class="hint">Password</label>
+          {{ form.password1 }}
+          <div class="hint">{{ form.password1.errors }}</div>
+        </div>
+
+        <div style="flex:1; min-width:240px">
+          <label class="hint">Confirm Password</label>
+          {{ form.password2 }}
+          <div class="hint">{{ form.password2.errors }}</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row">
+        <button class="btn primary" type="submit">Create user</button>
+        <a class="btn" href="{% url 'manage_users' %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

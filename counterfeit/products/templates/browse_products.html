@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Browse Products · BlockVerify{% endblock %}
+
+{% block content %}
+<section class="card" style="margin-top:18px">
+  <div class="hd">
+    <div>
+      <h2>Browse Products</h2>
+      <p>All registered products and their generated QR codes.</p>
+    </div>
+    <span class="badge">{{ products|length }} shown</span>
+  </div>
+
+  <div class="bd" style="padding:0">
+    {% if products %}
+      <table>
+        <thead>
+          <tr>
+            <th>Product ID</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Manufacturer</th>
+            <th>Created</th>
+            <th>QR</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in products %}
+            <tr>
+              <td>{{ p.product_id }}</td>
+              <td>{{ p.product_name }}</td>
+              <td>{{ p.category }}</td>
+              <td>{{ p.manufacturer_name }}</td>
+              <td>{{ p.created_at|date:"Y-m-d H:i" }}</td>
+              <td>
+                {% if p.qr_code %}
+                  <a class="pill" href="{{ p.qr_code.url }}" target="_blank" rel="noreferrer">View</a>
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="empty">No products found.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

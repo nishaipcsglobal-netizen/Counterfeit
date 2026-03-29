@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}My Products · Manufacturer · BlockVerify{% endblock %}
+{% block content %}
+  <section class="card" style="margin-top:18px">
+    <div class="hd">
+      <div>
+        <h2>View My Products</h2>
+        <p>Products registered by you.</p>
+      </div>
+      <a class="btn primary" href="{% url 'register_product' %}">➕ Register</a>
+    </div>
+    <div class="bd" style="padding:0">
+      {% if products %}
+        <table>
+          <thead>
+            <tr>
+              <th>Product ID</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Hash</th>
+              <th>QR</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in products %}
+              <tr>
+                <td>{{ p.product_id }}</td>
+                <td>{{ p.product_name }}</td>
+                <td>{{ p.category }}</td>
+                <td style="max-width:320px; word-break:break-all">{{ p.hash_value }}</td>
+                <td>{% if p.qr_code %}<a class="pill" href="{{ p.qr_code.url }}" target="_blank">View</a>{% else %}-{% endif %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="empty">No products yet.</div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard · BlockVerify{% endblock %}
+{% block content %}
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <section class="card" style="margin-top:18px">
+      <div class="hd">
+        <div>
+          <h2>Admin Module</h2>
+          <p>Manage users and access system dashboards.</p>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="row">
+          <a class="btn primary" href="{% url 'manage_users' %}">👥 Manage Users</a>
+          <a class="btn" href="{% url 'add_user' %}">➕ Add User</a>
+        </div>
+        <div class="divider"></div>
+        <div class="hint">Disable a user to block login (uses <code>is_active</code>).</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:18px">
+      <div class="hd">
+        <div>
+          <h2>Quick Links</h2>
+          <p>Customer pages</p>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="row">
+          <a class="pill" href="{% url 'verify' %}">Verify</a>
+          <a class="pill" href="{% url 'scan_history' %}">History</a>
+          <a class="pill" href="{% url 'browse_products' %}">Browse</a>
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock %}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Product</title>
+</head>
+<body>
+    <h2>Product Verification</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <label>Product ID:</label>
+        <input type="text" name="product_id"><br><br>
+
+        <label>Hash Value:</label>
+        <input type="text" name="hash_value"><br><br>
+
+        <button type="submit">Verify</button>
+    </form>
+
+    {% if result %}
+        <h3>{{ result }}</h3>
+    {% endif %}
+</body>
+</html>

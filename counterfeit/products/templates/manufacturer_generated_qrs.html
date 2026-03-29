@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Generated QRs · BlockVerify{% endblock %}
+
+{% block content %}
+<section class="card" style="margin-top:18px">
+  <div class="hd">
+    <div>
+      <h2>Generated QRs</h2>
+      <p>QR codes for your registered products.</p>
+    </div>
+    <div class="row">
+      <a class="pill" href="{% url 'my_products' %}">📦 My products</a>
+      <a class="pill" href="{% url 'register_product' %}">➕ Register</a>
+    </div>
+  </div>
+
+  <div class="bd">
+    {% if products %}
+      <div class="row" style="gap:14px">
+        {% for p in products %}
+          <div class="card" style="width:260px">
+            <div class="hd">
+              <div>
+                <h2 style="font-size:14px; margin:0">{{ p.product_name }}</h2>
+                <p style="margin:6px 0 0; color:var(--muted)">ID: {{ p.product_id }}</p>
+              </div>
+            </div>
+            <div class="bd">
+              {% if p.qr_code %}
+                <img src="{{ p.qr_code.url }}" alt="QR" style="width:100%; border-radius:12px; border:1px solid rgba(255,255,255,.10)" />
+                <div class="row" style="margin-top:10px">
+                  <a class="btn primary" href="{{ p.qr_code.url }}" target="_blank" rel="noreferrer">Open</a>
+                  <a class="btn" href="{{ p.qr_code.url }}" download>Download</a>
+                </div>
+              {% else %}
+                <div class="empty">No QR generated.</div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty">No QR codes yet.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

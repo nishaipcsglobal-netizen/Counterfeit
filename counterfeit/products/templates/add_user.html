@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Add User · Admin · BlockVerify{% endblock %}
+{% block content %}
+  <section class="card" style="margin-top:18px; max-width:720px">
+    <div class="hd">
+      <div>
+        <h2>Add User</h2>
+        <p>Create admin / manufacturer / customer accounts.</p>
+      </div>
+    </div>
+    <div class="bd">
+      {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <div>
+          <label class="hint">User ID</label>
+          <input type="text" name="username" required />
+        </div>
+        <div style="margin-top:12px">
+          <label class="hint">Password</label>
+          <input type="password" name="password" required />
+        </div>
+        <div style="margin-top:12px">
+          <label class="hint">Role</label>
+          <select name="role">
+            <option value="customer">Customer</option>
+            <option value="manufacturer">Manufacturer</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn primary" type="submit">Create user</button>
+          <a class="pill" href="{% url 'manage_users' %}">Back</a>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

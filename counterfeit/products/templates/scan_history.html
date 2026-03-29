@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Scan History · BlockVerify{% endblock %}
+
+{% block content %}
+<section class="card" style="margin-top:18px">
+  <div class="hd">
+    <div>
+      <h2>Scan History</h2>
+      <p>Recent verification attempts (saved automatically).</p>
+    </div>
+    <span class="badge">{{ logs|length }} shown</span>
+  </div>
+
+  <div class="bd" style="padding:0">
+    {% if logs %}
+      <table>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Product ID</th>
+            <th>Status</th>
+            <th>Product name</th>
+            <th>Category</th>
+            <th>Manufacturer</th>
+            <th>User</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td>{{ log.scanned_at|date:"Y-m-d H:i" }}</td>
+              <td>{{ log.product_id }}</td>
+              <td>
+                {% if log.status == "AUTHENTIC" %}✅ AUTHENTIC
+                {% elif log.status == "FAKE" %}❌ FAKE
+                {% else %}⚠️ ERROR{% endif %}
+              </td>
+              <td>{{ log.product_name|default:"-" }}</td>
+              <td>{{ log.category|default:"-" }}</td>
+              <td>{{ log.manufacturer_name|default:"-" }}</td>
+              <td>{% if log.user %}{{ log.user.username }}{% else %}-{% endif %}</td>
+              <td>{{ log.client_ip|default:"-" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="empty">No scans yet.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

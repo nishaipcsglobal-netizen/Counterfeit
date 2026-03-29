@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Login · BlockVerify{% endblock %}
+{% block content %}
+  <section class="card" style="margin-top:18px; max-width:540px">
+    <div class="hd">
+      <div>
+        <h2>Login</h2>
+        <p>Use your user id and password.</p>
+      </div>
+    </div>
+    <div class="bd">
+      {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <div class="row" style="align-items:flex-start">
+          <div style="flex:1">
+            <label class="hint">User ID</label>
+            <input type="text" name="username" required />
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <label class="hint">Password</label>
+          <input type="password" name="password" required />
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn primary" type="submit">Login</button>
+          <a class="pill" href="{% url 'register' %}">Create account</a>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}
