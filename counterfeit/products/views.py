@@ -16,6 +16,10 @@ from .decorators import role_required
 from .forms import AdminCreateUserForm
 from .models import Product, ScanLog
 
+from django.http import HttpResponse
+import qrcode
+from io import BytesIO
+
 User = get_user_model()
 
 
@@ -345,7 +349,19 @@ def register_product(request: HttpRequest):
 
     return redirect("my_products")
 
+@login_required
+def product_qr(request, product_id: str):
+    p = get_object_or_404(Product, product_id=product_id)
 
+    # QR payload matches your spec: product_id|sha256
+    payload = f"{p.product_id}|{p.hash_value}"
+
+    img = qrcode.make(payload)
+    buf = BytesIO()
+    img.save(buf, format="PNG")
+
+    return HttpResponse(buf.getvalue(), content_type="image/png")
+    
 @login_required
 @role_required(User.ROLE_MANUFACTURER)
 def my_products(request: HttpRequest):
