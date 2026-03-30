@@ -34,9 +34,6 @@ app.get('/mine', (req, res) => {
 
     const newBlock = bitcoin.createNewBlock(nonce, previousHash, hash);
 
-    const PORT = process.env.PORT || 3000;
-       app.listen(PORT, "0.0.0.0", () => console.log(`Listening on ${PORT}`));
-
     res.json({
         note: "New block mined",
         block: newBlock
@@ -60,3 +57,5 @@ app.get('/validate', (req, res) => {
 app.listen(port, () => {
     console.log(`Running on port ${port}`);
 });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, "0.0.0.0", () => console.log(`Listening on ${PORT}`));
