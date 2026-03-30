@@ -1,15 +1,11 @@
 {
   "name": "blockchain_node",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "main": "networkNode.js",
   "type": "commonjs",
+  "scripts": {
+    "start": "node networkNode.js"
+  },
   "dependencies": {
     "body-parser": "^2.2.2",
     "express": "^5.2.1",
