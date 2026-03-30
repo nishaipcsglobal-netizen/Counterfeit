@@ -22,6 +22,8 @@ urlpatterns = [
     path("browse-products/", product_views.browse_products, name="browse_products"),
     path("browse-history/", product_views.browse_history, name="browse_history"),
     path("qr/<str:product_id>.png", product_views.product_qr, name="product_qr"),
+    
+    
     # APIs
     path("verify-api/", product_views.verify_api, name="verify_api"),
 
