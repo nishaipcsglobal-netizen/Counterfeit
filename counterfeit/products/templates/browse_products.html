@@ -34,7 +34,8 @@
               <td>{{ p.created_at|date:"Y-m-d H:i" }}</td>
               <td>
                 {% if p.qr_code %}
-                  <a class="pill" href="{{ p.qr_code.url }}" target="_blank" rel="noreferrer">View</a>
+                  
+                  <a class="pill" href="{% url 'product_qr' p.product_id %}" target="_blank">View</a>
                 {% else %}
                   -
                 {% endif %}
